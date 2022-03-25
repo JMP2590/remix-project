@@ -61,8 +61,16 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
         /.(.vy)$/.exec(currentFile) || // vyper
         /.(.lex)$/.exec(currentFile) || // lexon
         /.(.contract)$/.exec(currentFile)) {
+      setAbiLabel({
+        display: 'none',
+        content: ''
+      })
       if (!selectedContract) enableAtAddress(false)
     } else {
+      setAbiLabel({
+        display: 'none',
+        content: ''
+      })
       if (!selectedContract) enableAtAddress(false)
     }
     if (currentFile) {
@@ -102,10 +110,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
       const contract = contracts.find(contract => contract.alias === selectedContract)
 
       if (!selectedContract || !contract) setSelectedContract(contracts[0].alias)
-      contractsRef.current.focus()
-      setTimeout(() => {
-        contractsRef.current.blur()
-      }, 1000)
+      // TODO highlight contractlist box with css.
     }
   }
 
@@ -143,7 +148,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
 
   const createInstance = (selectedContract, args) => {
     if (selectedContract.bytecodeObject.length === 0) {
-      return props.modal('Alert', 'This contract may be abstract, not implement an abstract parent\'s methods completely or not invoke an inherited contract\'s constructor correctly.', 'OK', () => {})
+      return props.modal('Alert', 'This contract may be abstract, it may not implement an abstract parent\'s methods completely or it may not invoke an inherited contract\'s constructor correctly.', 'OK', () => {})
     }
     props.createInstance(loadedContractData, props.gasEstimationPrompt, props.passphrasePrompt, props.logBuilder, props.publishToStorage, props.mainnetPrompt, isOverSizePrompt, args)
   }
@@ -154,7 +159,7 @@ export function ContractDropdownUI (props: ContractDropdownProps) {
     if (!value) {
       enableAtAddress(false)
     } else {
-      if (atAddressOptions.disabled && (loadType === 'sol' || loadType === 'abi')) {
+      if (loadType === 'sol' || loadType === 'abi') {
         enableAtAddress(true)
       } else {
         enableAtAddress(false)
